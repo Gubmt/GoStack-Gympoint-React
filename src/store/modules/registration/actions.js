@@ -1,20 +1,26 @@
 export function createRegistrationRequest(
   student,
   plan_id,
-  startDate,
+  start_date,
   end_date,
   price
 ) {
   return {
     type: '@registration/CREATE_REGISTRATION_REQUEST',
-    payload: { student, plan_id, startDate, end_date, price },
+    payload: { student, plan_id, start_date, end_date, price },
   };
 }
 
-export function updateRegistrationRequest(student, plan, start_date) {
+export function updateRegistrationRequest(
+  student,
+  plan_id,
+  start_date,
+  end_date,
+  price
+) {
   return {
     type: '@registration/UPDATE_REGISTRATION_REQUEST',
-    payload: { student, plan, start_date },
+    payload: { student, plan_id, start_date, end_date, price },
   };
 }
 

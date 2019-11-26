@@ -2,34 +2,50 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
-import { format, addMonths } from 'date-fns';
+import { format, addMonths, parseISO } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import DatePicker from '~/components/DatePicker';
-import SelectStudent from '~/components/SelectStudent';
 import SelectPlan from '~/components/SelectPlan';
 import { formatPrice } from '~/util/format';
 import history from '~/services/history';
 
-import { createRegistrationRequest } from '~/store/modules/registration/actions';
+import { updateRegistrationRequest } from '~/store/modules/registration/actions';
 
 import { Container, Wrapper } from './styles';
 
-export default function CreateRegistrations() {
+export default function UpdateRegistrations() {
   const [selected, setSelected] = useState();
 
   const [plan, setPlan] = useState();
   const [totalPrice, setTotalPrice] = useState({});
   const [endDate, setEndDate] = useState({});
+  const [registration, setRegistration] = useState({});
 
   const dispatch = useDispatch();
-  const students = useSelector(state => state.user.students);
   const plans = useSelector(state => state.user.plans);
-
-  const labels = students.map(s => {
-    return { id: s.id, name: s.name };
-  });
+  const registrations = useSelector(state => state.user.registrations);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  useEffect(() => {
+    function loadRegistrations() {
+      const id = window.location.pathname.split('/');
+
+      const data = registrations.find(p => {
+        return p.id === Number(id[3]);
+      });
+
+      setRegistration({
+        student_id: data.student.id,
+        student_name: data.student.name,
+        plan_title: data.plan.title,
+        start_date: format(parseISO(data.start_date), "dd'/'MM'/'yyyy"),
+        end_date: format(parseISO(data.end_date), "dd'/'MM'/'yyyy"),
+        price: formatPrice(data.price),
+      });
+    }
+    loadRegistrations();
+  }, [registrations]);
 
   useEffect(() => {
     if (selected && plan) {
@@ -46,25 +62,10 @@ export default function CreateRegistrations() {
     }
   }, [plan, selected, timezone]);
 
-  const loadStudents = inputValue => {
-    const data = labels.find(s =>
-      s.name.toLowerCase().includes(inputValue.toLowerCase())
-    );
-    if (inputValue === '') return labels;
-    return data && [data];
-  };
-
-  const studentOptions = inputValue =>
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve(loadStudents(inputValue));
-      }, 500);
-    });
-
-  function handleSubmit({ student, plan_id, start_date }) {
+  function handleSubmit({ plan_id, start_date }) {
     dispatch(
-      createRegistrationRequest(
-        student,
+      updateRegistrationRequest(
+        registration.student_id,
         plan_id,
         start_date,
         endDate.newEndDate,
@@ -85,7 +86,7 @@ export default function CreateRegistrations() {
     <Container>
       <Form onSubmit={handleSubmit}>
         <header>
-          <h1>Cadastro de matrícula</h1>
+          <h1>Edição de matrícula</h1>
           <div>
             <button
               id="back"
@@ -103,11 +104,11 @@ export default function CreateRegistrations() {
         <Wrapper>
           <div className="student">
             <strong>ALUNO</strong>
-            <SelectStudent
+            <Input
               name="student"
-              options={studentOptions}
-              inputChange={studentOptions}
-              placeholder="Selecione o aluno"
+              className="input"
+              value={registration.student_name}
+              disabled
             />
           </div>
           <div className="inf">
@@ -118,7 +119,7 @@ export default function CreateRegistrations() {
                 name="plan_id"
                 options={plans}
                 inputChange={handlePlanChange}
-                placeholder="Selecione o plano"
+                placeholder={registration.plan_title}
               />
             </div>
 
@@ -129,8 +130,8 @@ export default function CreateRegistrations() {
                 id="date"
                 inputChange={handleDateChange}
                 customInput={<Input className="input" />}
-                placeholder="Selecione a data"
                 selected={selected}
+                placeholder={registration.start_date}
               />
             </div>
             <div className="inputbox">
@@ -140,6 +141,7 @@ export default function CreateRegistrations() {
                 name="end_date"
                 type="text"
                 value={endDate.newEndDateFormatted}
+                placeholder={registration.end_date}
                 disabled
               />
             </div>
@@ -150,6 +152,7 @@ export default function CreateRegistrations() {
                 name="price"
                 type="text"
                 value={totalPrice.newTotalPriceFormatted}
+                placeholder={registration.price}
                 disabled
               />
             </div>

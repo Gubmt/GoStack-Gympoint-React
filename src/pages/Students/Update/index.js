@@ -5,27 +5,25 @@ import { MdChevronLeft, MdDone } from 'react-icons/md';
 import history from '~/services/history';
 
 import { Container, Wrapper } from './styles';
-import api from '~/services/api';
 import { updateStudentRequest } from '~/store/modules/student/actions';
 
 export default function UpdateStudents() {
-  const [student, setStudents] = useState({});
+  const [student, setStudent] = useState({});
   const dispatch = useDispatch();
   const students = useSelector(state => state.user.students);
-  const studentId = useSelector(state => state.student.student_id);
 
   useEffect(() => {
     function loadStudents() {
       const id = window.location.pathname.split('/');
-      console.tron.log(id[3]);
-      setStudents(
+
+      setStudent(
         students.find(p => {
           return p.id === Number(id[3]);
         })
       );
     }
     loadStudents();
-  }, [studentId, students]);
+  }, [students]);
 
   function handleSubmit({ name, email, age, weight, height }) {
     const { id } = student;

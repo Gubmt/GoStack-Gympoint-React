@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Form, Input } from '@rocketseat/unform';
 import { MdAdd } from 'react-icons/md';
 import { FaCheckCircle } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import history from '~/services/history';
 
+import { saveRegistrations } from '~/store/modules/user/actions';
+
 import { Container, Wrapper, RegistrationTable } from './styles';
 import api from '~/services/api';
-import { findRegistration } from '~/store/modules/student/actions';
 
 export default function ListRegistration() {
   const dispatch = useDispatch();
+
   const [registrations, setRegistrations] = useState([]);
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
 
   useEffect(() => {
     async function loadRegistrations() {
       const response = await api.get('/registrations');
+      dispatch(saveRegistrations(response.data));
       const data = response.data.map(reg => {
         return {
           id: reg.id,
@@ -41,7 +41,7 @@ export default function ListRegistration() {
       setRegistrations(data);
     }
     loadRegistrations();
-  }, []);
+  }, [dispatch]);
 
   /* async function updateRegistration(id) {
     const registration = registrations.find(p => {
@@ -100,7 +100,13 @@ export default function ListRegistration() {
                 </td>
                 <td>
                   <div>
-                    <button id="left" type="button">
+                    <button
+                      id="left"
+                      type="button"
+                      onClick={() =>
+                        history.push(`/registrations/update/${registration.id}`)
+                      }
+                    >
                       editar
                     </button>
                     <button type="button">apagar</button>

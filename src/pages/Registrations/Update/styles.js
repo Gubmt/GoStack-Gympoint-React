@@ -47,6 +47,19 @@ export const Wrapper = styled.div`
 
   div.student {
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-right: 10px;
+    flex-grow: 1;
+
+    .input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      height: 45px;
+      width: 100%;
+    }
   }
 
   div.inf {

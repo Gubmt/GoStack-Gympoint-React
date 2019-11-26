@@ -8,12 +8,11 @@ import { registrationFailure } from './actions';
 
 export function* createRegistration({ payload }) {
   try {
-    const { student, plan_id, startDate, end_date, price } = payload;
-
+    const { student, plan_id, start_date, end_date, price } = payload;
     yield call(api.post, `registrations/${student}`, {
       plan_id,
-      startDate,
-      end_date,
+      startDate: start_date,
+      endDate: end_date,
       price,
     });
 
@@ -26,11 +25,13 @@ export function* createRegistration({ payload }) {
 
 export function* updateRegistration({ payload }) {
   try {
-    const { student, plan, start_date } = payload;
+    const { student, plan_id, start_date, end_date, price } = payload;
 
     yield call(api.put, `registrations/${student}`, {
-      plan,
-      start_date,
+      plan_id,
+      startDate: start_date,
+      endDate: end_date,
+      price,
     });
 
     history.push('/registrations');

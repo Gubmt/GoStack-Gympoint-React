@@ -14,6 +14,7 @@ import UpdatePlans from '~/pages/Plans/Update';
 
 import Registrations from '~/pages/Registrations';
 import CreateRegistrations from '~/pages/Registrations/Create';
+import UpdateRegistrations from '~/pages/Registrations/Update';
 
 import HelpOrders from '~/pages/HelpOrders';
 
@@ -34,6 +35,11 @@ export default function Routes() {
       <Route
         path="/registrations/create"
         component={CreateRegistrations}
+        isPrivate
+      />
+      <Route
+        path="/registrations/update"
+        component={UpdateRegistrations}
         isPrivate
       />
 
