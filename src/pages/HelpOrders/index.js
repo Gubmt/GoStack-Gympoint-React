@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import Modal from 'react-modal';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
+import * as Yup from 'yup';
 
 import { Container, Wrapper, HelpTable, StyledModal } from './styles';
 import api from '~/services/api';
 
-const styles = {
-  overlay: {
-    position: 'absolute',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0, 0.5)',
-  },
-  content: {
-    width: '450px',
-    height: '425px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
-  },
-};
+import { answerRequest } from '~/store/modules/helpOrder/actions';
+
+const schema = Yup.object().shape({
+  answer: Yup.string().required('A resposta é obrigatória'),
+});
 
 export default function HelpOrders() {
   const dispatch = useDispatch();
   const [helps, setHelps] = useState([]);
+  const [question, setQuestion] = useState([]);
   const [modal, setModal] = useState(false);
+
+  const loading = useSelector(state => state.helpOrder.loading);
 
   useEffect(() => {
     async function loadHelps() {
@@ -37,7 +27,18 @@ export default function HelpOrders() {
       setHelps(response.data);
     }
     loadHelps();
-  }, []);
+  }, [helps]);
+
+  function handlequestion(id) {
+    const data = helps.find(h => h.id === id);
+    setQuestion(data);
+    setModal(true);
+  }
+
+  function handleSubmit({ answer }) {
+    dispatch(answerRequest(question.id, answer));
+    if (!loading) setModal(false);
+  }
 
   return (
     <>
@@ -61,7 +62,10 @@ export default function HelpOrders() {
                   </td>
                   <td>
                     <div>
-                      <button onClick={() => setModal(true)} type="button">
+                      <button
+                        onClick={() => handlequestion(help.id)}
+                        type="button"
+                      >
                         responder
                       </button>
                     </div>
@@ -71,16 +75,18 @@ export default function HelpOrders() {
             </tbody>
           </HelpTable>
         </Wrapper>
-        <StyledModal isOpen={modal} style={styles}>
-          <span className="modal">PERGUNTA DO ALUNO</span>
-          <p className="modal">Pergunta do aluno para o instrutor</p>
-          <span className="modal">SUA RESPOSTA</span>
-          <Form onSubmit={() => setModal(false)}>
-            <Input name="answer" type="text" />
-            <button className="modal" type="submit">
-              Responder aluno
-            </button>
-          </Form>
+        <StyledModal isOpen={modal} ariaHideApp={false}>
+          <div className="modal">
+            <span className="modal">PERGUNTA DO ALUNO</span>
+            <p className="modal"> {question.question}</p>
+            <span className="modal">SUA RESPOSTA</span>
+            <Form onSubmit={handleSubmit} schema={schema}>
+              <Input multiline name="answer" className="modal" />
+              <button className="modal" type="submit">
+                Responder aluno
+              </button>
+            </Form>
+          </div>
         </StyledModal>
       </Container>
     </>

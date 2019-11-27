@@ -43,7 +43,7 @@ export default function Routes() {
         isPrivate
       />
 
-      <Route path="/help-orders" component={HelpOrders} isPrivate />
+      <Route path="/help-orders" exact component={HelpOrders} isPrivate />
     </Switch>
   );
 }

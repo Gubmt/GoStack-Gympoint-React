@@ -49,28 +49,63 @@ export const HelpTable = styled.table`
 `;
 
 export const StyledModal = styled(Modal)`
-  span.modal {
-    font-size: 14px;
-    font-weight: bold;
-    color: #444;
-    margin-bottom: 20px;
-  }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
 
-  p.modal {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 20px;
-  }
-
-  input.modal {
-    border: 1px solid #eee;
+  div.modal {
+    width: 450px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-content: left;
+    padding: 30px;
+    background: #fff;
     border-radius: 4px;
-    height: 45px;
-  }
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 
-  button.modal {
-    height: 45px;
-    text-align: center;
-    background: #ee4d64;
+    span.modal {
+      font-size: 14px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    p.modal {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: flex-end;
+
+      textarea.modal {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        height: 127px;
+        margin-bottom: 20px;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      button.modal {
+        height: 45px;
+        border: 0;
+        border-radius: 4px;
+        font-size: 16px;
+        text-align: center;
+        font-weight: bold;
+        color: #fff;
+        background: #ee4d64;
+      }
+    }
   }
 `;
