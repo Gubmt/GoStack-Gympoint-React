@@ -1,41 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import { format, addMonths, parseISO } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import DatePicker from '~/components/DatePicker';
+import SelectStudent from '~/components/SelectStudent';
 import SelectPlan from '~/components/SelectPlan';
 import { formatPrice } from '~/util/format';
 import history from '~/services/history';
 
+import Currency from '~/components/Currency';
+
 import { updateRegistrationRequest } from '~/store/modules/registration/actions';
 
 import { Container, Wrapper } from './styles';
+import api from '~/services/api';
 
 export default function UpdateRegistrations() {
   const [selected, setSelected] = useState();
 
   const [plan, setPlan] = useState();
+  const [plans, setPlans] = useState();
   const [totalPrice, setTotalPrice] = useState({});
   const [endDate, setEndDate] = useState({});
   const [registration, setRegistration] = useState({});
 
   const dispatch = useDispatch();
-  const plans = useSelector(state => state.user.plans);
-  const registrations = useSelector(state => state.user.registrations);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   useEffect(() => {
-    function loadRegistrations() {
+    async function loadPlans() {
+      const response = await api.get('/plans');
+      setPlans(response.data);
+    }
+    loadPlans();
+  }, []);
+
+  useEffect(() => {
+    async function loadRegistrations() {
       const id = window.location.pathname.split('/');
 
-      const data = registrations.find(p => {
+      const registrations = await api.get('/registrations');
+
+      const data = registrations.data.find(p => {
         return p.id === Number(id[3]);
       });
 
       setRegistration({
+        registration_id: data.id,
         student_id: data.student.id,
         student_name: data.student.name,
         plan_title: data.plan.title,
@@ -45,7 +59,7 @@ export default function UpdateRegistrations() {
       });
     }
     loadRegistrations();
-  }, [registrations]);
+  }, []);
 
   useEffect(() => {
     if (selected && plan) {
@@ -57,15 +71,32 @@ export default function UpdateRegistrations() {
       setEndDate({ newEndDate, newEndDateFormatted });
 
       const newTotalPrice = plan.price * plan.duration;
-      const newTotalPriceFormatted = formatPrice(newTotalPrice);
-      setTotalPrice({ newTotalPrice, newTotalPriceFormatted });
+      setTotalPrice({ newTotalPrice });
     }
   }, [plan, selected, timezone]);
 
-  function handleSubmit({ plan_id, start_date }) {
+  const loadStudents = async inputValue => {
+    const students = await api.get('/students');
+    const labels = students.data.map(s => {
+      return { id: s.id, name: s.name };
+    });
+    const data = labels.find(s =>
+      s.name.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    if (inputValue === '') return labels;
+    return data && [data];
+  };
+
+  const studentOptions = inputValue =>
+    new Promise(resolve => {
+      resolve(loadStudents(inputValue));
+    });
+
+  function handleSubmit({ student_id, plan_id, start_date }) {
     dispatch(
       updateRegistrationRequest(
-        registration.student_id,
+        registration.registration_id,
+        student_id,
         plan_id,
         start_date,
         endDate.newEndDate,
@@ -104,11 +135,11 @@ export default function UpdateRegistrations() {
         <Wrapper>
           <div className="student">
             <strong>ALUNO</strong>
-            <Input
-              name="student"
-              className="input"
-              value={registration.student_name}
-              disabled
+            <SelectStudent
+              name="student_id"
+              options={studentOptions}
+              inputChange={studentOptions}
+              placeholder={registration.student_name}
             />
           </div>
           <div className="inf">
@@ -147,11 +178,14 @@ export default function UpdateRegistrations() {
             </div>
             <div className="inputbox" id="price">
               <strong>VALOR FINAL</strong>
-              <Input
+              <Currency
                 className="input"
                 name="price"
-                type="text"
-                value={totalPrice.newTotalPriceFormatted}
+                thousandSeparator={false}
+                prefix="R$"
+                suffix=",00"
+                inputValue={totalPrice.newTotalPrice}
+                value={totalPrice.newTotalPrice}
                 placeholder={registration.price}
                 disabled
               />

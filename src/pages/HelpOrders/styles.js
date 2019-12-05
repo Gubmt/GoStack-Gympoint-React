@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Modal from 'react-modal';
 
 export const Container = styled.div`
-  height: 100%;
   padding: 0 370px;
 
   header {

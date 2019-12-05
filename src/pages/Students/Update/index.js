@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import history from '~/services/history';
 
 import { Container, Wrapper } from './styles';
 import { updateStudentRequest } from '~/store/modules/student/actions';
+import api from '~/services/api';
 
 export default function UpdateStudents() {
   const [student, setStudent] = useState({});
   const dispatch = useDispatch();
-  const students = useSelector(state => state.user.students);
 
   useEffect(() => {
-    function loadStudents() {
+    async function loadStudents() {
+      const students = await api.get('/students');
       const id = window.location.pathname.split('/');
 
       setStudent(
-        students.find(p => {
+        students.data.find(p => {
           return p.id === Number(id[3]);
         })
       );
     }
     loadStudents();
-  }, [students]);
+  }, []);
 
   function handleSubmit({ name, email, age, weight, height }) {
     const { id } = student;

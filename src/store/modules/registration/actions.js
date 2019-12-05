@@ -12,7 +12,8 @@ export function createRegistrationRequest(
 }
 
 export function updateRegistrationRequest(
-  student,
+  registration_id,
+  student_id,
   plan_id,
   start_date,
   end_date,
@@ -20,7 +21,14 @@ export function updateRegistrationRequest(
 ) {
   return {
     type: '@registration/UPDATE_REGISTRATION_REQUEST',
-    payload: { student, plan_id, start_date, end_date, price },
+    payload: {
+      registration_id,
+      student_id,
+      plan_id,
+      start_date,
+      end_date,
+      price,
+    },
   };
 }
 

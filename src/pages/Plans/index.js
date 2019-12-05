@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input } from '@rocketseat/unform';
-import { useDispatch } from 'react-redux';
 import { MdAdd } from 'react-icons/md';
 import history from '~/services/history';
 
+import Page from '~/components/Page';
+
 import { Container, Wrapper, PlanTable } from './styles';
 import api from '~/services/api';
-import { savePlans } from '~/store/modules/user/actions';
 import { formatPrice } from '~/util/format';
 
 export default function Plans() {
-  const dispatch = useDispatch();
   const [plans, setPlans] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(false);
 
   useEffect(() => {
     async function loadPlans() {
@@ -23,10 +23,39 @@ export default function Plans() {
       }));
 
       setPlans(data);
-      dispatch(savePlans(response.data));
+
+      if (response.data.length < 10) setLastPage(true);
+      else setLastPage(false);
     }
     loadPlans();
-  }, [dispatch]);
+  }, [page]);
+
+  async function handleDelete(id) {
+    if (window.confirm('Você deseja deletar esse plano?')) {
+      const response = await api.delete(`/plans/${id}`, {
+        params: {
+          page,
+        },
+      });
+      console.tron.log(response.data);
+      const data = response.data.map(plan => ({
+        ...plan,
+        priceFormatted: formatPrice(plan.price),
+      }));
+
+      setPlans(data);
+    }
+  }
+
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
 
   return (
     <Container>
@@ -40,6 +69,12 @@ export default function Plans() {
       </header>
 
       <Wrapper>
+        <Page
+          page={page}
+          lastPage={lastPage}
+          prevPage={() => prevPage()}
+          nextPage={() => nextPage()}
+        />
         <PlanTable>
           <thead>
             <tr>
@@ -70,7 +105,9 @@ export default function Plans() {
                     >
                       editar
                     </button>
-                    <button type="button">apagar</button>
+                    <button onClick={() => handleDelete(plan.id)} type="button">
+                      apagar
+                    </button>
                   </div>
                 </td>
               </tr>

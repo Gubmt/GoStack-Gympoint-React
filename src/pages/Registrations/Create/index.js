@@ -1,35 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import { format, addMonths } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import DatePicker from '~/components/DatePicker';
 import SelectStudent from '~/components/SelectStudent';
 import SelectPlan from '~/components/SelectPlan';
-import { formatPrice } from '~/util/format';
 import history from '~/services/history';
+import Currency from '~/components/Currency';
 
 import { createRegistrationRequest } from '~/store/modules/registration/actions';
 
 import { Container, Wrapper } from './styles';
+import api from '~/services/api';
 
 export default function CreateRegistrations() {
   const [selected, setSelected] = useState();
 
   const [plan, setPlan] = useState();
+  const [plans, setPlans] = useState();
   const [totalPrice, setTotalPrice] = useState({});
   const [endDate, setEndDate] = useState({});
 
   const dispatch = useDispatch();
-  const students = useSelector(state => state.user.students);
-  const plans = useSelector(state => state.user.plans);
-
-  const labels = students.map(s => {
-    return { id: s.id, name: s.name };
-  });
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  useEffect(() => {
+    async function loadPlans() {
+      const response = await api.get('/plans');
+      setPlans(response.data);
+    }
+    loadPlans();
+  }, []);
 
   useEffect(() => {
     if (selected && plan) {
@@ -41,12 +45,15 @@ export default function CreateRegistrations() {
       setEndDate({ newEndDate, newEndDateFormatted });
 
       const newTotalPrice = plan.price * plan.duration;
-      const newTotalPriceFormatted = formatPrice(newTotalPrice);
-      setTotalPrice({ newTotalPrice, newTotalPriceFormatted });
+      setTotalPrice({ newTotalPrice });
     }
   }, [plan, selected, timezone]);
 
-  const loadStudents = inputValue => {
+  const loadStudents = async inputValue => {
+    const students = await api.get('/students');
+    const labels = students.data.map(s => {
+      return { id: s.id, name: s.name };
+    });
     const data = labels.find(s =>
       s.name.toLowerCase().includes(inputValue.toLowerCase())
     );
@@ -56,9 +63,7 @@ export default function CreateRegistrations() {
 
   const studentOptions = inputValue =>
     new Promise(resolve => {
-      setTimeout(() => {
-        resolve(loadStudents(inputValue));
-      }, 500);
+      resolve(loadStudents(inputValue));
     });
 
   function handleSubmit({ student, plan_id, start_date }) {
@@ -145,11 +150,14 @@ export default function CreateRegistrations() {
             </div>
             <div className="inputbox" id="price">
               <strong>VALOR FINAL</strong>
-              <Input
+              <Currency
                 className="input"
                 name="price"
-                type="text"
-                value={totalPrice.newTotalPriceFormatted}
+                thousandSeparator={false}
+                prefix="R$"
+                suffix=",00"
+                inputValue={totalPrice.newTotalPrice}
+                value={totalPrice.newTotalPrice}
                 disabled
               />
             </div>

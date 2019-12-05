@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { MdAdd } from 'react-icons/md';
 import { FaCheckCircle } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import history from '~/services/history';
 
-import { saveRegistrations } from '~/store/modules/user/actions';
+import Page from '~/components/Page';
 
 import { Container, Wrapper, RegistrationTable } from './styles';
 import api from '~/services/api';
 
 export default function ListRegistration() {
-  const dispatch = useDispatch();
-
   const [registrations, setRegistrations] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(false);
 
   useEffect(() => {
     async function loadRegistrations() {
       const response = await api.get('/registrations');
-      dispatch(saveRegistrations(response.data));
+
       const data = response.data.map(reg => {
         return {
           id: reg.id,
@@ -39,17 +38,33 @@ export default function ListRegistration() {
         };
       });
       setRegistrations(data);
+
+      if (response.data.length < 10) setLastPage(true);
+      else setLastPage(false);
     }
     loadRegistrations();
-  }, [dispatch]);
+  }, [page]);
 
-  /* async function updateRegistration(id) {
-    const registration = registrations.find(p => {
-      return p.id === id;
-    });
-    dispatch(findRegistration(registration));
-    history.push('/registration/update');
-  } */
+  async function handleDelete(id) {
+    if (window.confirm('Você deseja deletar essa matrícula?')) {
+      const response = await api.delete(`/registrations/${id}`, {
+        params: {
+          page,
+        },
+      });
+      setRegistrations(response.data);
+    }
+  }
+
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
 
   return (
     <Container>
@@ -66,6 +81,12 @@ export default function ListRegistration() {
       </header>
 
       <Wrapper>
+        <Page
+          page={page}
+          lastPage={lastPage}
+          prevPage={() => prevPage()}
+          nextPage={() => nextPage()}
+        />
         <RegistrationTable>
           <thead>
             <tr>
@@ -109,7 +130,12 @@ export default function ListRegistration() {
                     >
                       editar
                     </button>
-                    <button type="button">apagar</button>
+                    <button
+                      onClick={() => handleDelete(registration.id)}
+                      type="button"
+                    >
+                      apagar
+                    </button>
                   </div>
                 </td>
               </tr>

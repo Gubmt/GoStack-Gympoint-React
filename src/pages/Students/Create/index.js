@@ -49,25 +49,21 @@ export default function CreateStudents() {
 
         <Wrapper>
           <strong>NOME COMPLETO</strong>
-          <Input name="name" type="name" placeholder="Gustavo Barbieri" />
+          <Input name="name" type="name" placeholder="Nome completo do aluno" />
           <strong>ENDEREÇO DE E-MAIL</strong>
-          <Input
-            name="email"
-            type="email"
-            placeholder="gustavobarbieri@ymail.com"
-          />
+          <Input name="email" type="email" placeholder="example@email.com" />
           <div>
             <div className="input">
               <strong>IDADE</strong>
-              <Input name="age" type="text" placeholder="27" />
+              <Input name="age" type="text" placeholder="Idade do aluno" />
             </div>
             <div className="input">
               <strong>PESO(em kg)</strong>
-              <Input name="weight" type="text" placeholder="83.4" />
+              <Input name="weight" type="text" placeholder="Peso do aluno" />
             </div>
             <div className="input">
               <strong>ALTURA</strong>
-              <Input name="height" type="text" placeholder="1.88m" />
+              <Input name="height" type="text" placeholder="Altura do aluno" />
             </div>
           </div>
         </Wrapper>

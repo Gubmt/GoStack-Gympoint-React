@@ -1,40 +1,39 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  height: 100%;
   padding: 0 270px;
 
   form {
-
-  header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-
-    div {
+    header {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
       align-items: center;
+      margin-top: 30px;
 
-      button {
-        width: 112px;
-        height: 36px;
+      div {
         display: flex;
+        flex-direction: row;
         align-items: center;
-        justify-content: space-around;
-        padding: 0 10px;
-        margin-left: 16px;
-        border: 0px;
-        border-radius: 4px;
-        background: #ee4d64;
-        color: #fff;
-        font-weight: bold;
-      }
 
-      #back {
-        background: #ccc;
+        button {
+          width: 112px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          padding: 0 10px;
+          margin-left: 16px;
+          border: 0px;
+          border-radius: 4px;
+          background: #ee4d64;
+          color: #fff;
+          font-weight: bold;
+        }
+
+        #back {
+          background: #ccc;
+        }
       }
     }
   }

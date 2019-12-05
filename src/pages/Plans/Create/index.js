@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { useDispatch, useSelector } from 'react-redux';
+
+import CurrencyFormat from 'react-currency-format';
+import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import * as Yup from 'yup';
 import history from '~/services/history';
+
+import Currency from '~/components/Currency';
 
 import { createPlanRequest } from '~/store/modules/plan/actions';
 
@@ -11,14 +15,24 @@ import { Container, Wrapper } from './styles';
 
 const schema = Yup.object().shape({
   title: Yup.string().required('O título é obrigatório'),
-  duration: Yup.string().required('A duração é obrigatória'),
-  price: Yup.number().required('O preço é obrigatório'),
+  duration: Yup.number().required('A duração é obrigatória'),
+  price: Yup.string().required('O preço é obrigatório'),
 });
 
 export default function CreatePlans() {
+  const [checkDuration, setCheckDuration] = useState();
+  const [checkPrice, setCheckPrice] = useState();
+  const [checkTotalPrice, setCheckTotalPrice] = useState();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (checkDuration && checkPrice) {
+      setCheckTotalPrice(checkDuration * checkPrice);
+    }
+  }, [checkDuration, checkPrice]);
+
   function handleSubmit({ title, duration, price }) {
+    console.tron.log(price);
     dispatch(createPlanRequest(title, duration, price));
   }
 
@@ -43,19 +57,46 @@ export default function CreatePlans() {
 
         <Wrapper>
           <strong>TÍTULO DO PLANO</strong>
-          <Input name="title" type="name" />
+          <Input name="title" type="name" placeholder="Título do plano" />
           <div>
             <div className="input">
               <strong>DURAÇÃO EM MESES</strong>
-              <Input name="duration" type="text" />
+              <Input
+                name="duration"
+                type="number"
+                min="0"
+                max="12"
+                placeholder="Duração do plano"
+                onChange={e => setCheckDuration(e.target.value)}
+              />
             </div>
             <div className="input">
               <strong>PREÇO MENSAL</strong>
-              <Input name="price" type="text" />
+              <Currency
+                name="price"
+                thousandSeparator={false}
+                prefix="R$"
+                suffix=",00"
+                onValueChange={values => {
+                  const { value } = values;
+                  setCheckPrice(value);
+                  return value;
+                }}
+                inputValue={checkPrice}
+                placeholder="Preço mensal"
+              />
             </div>
             <div className="input">
               <strong>PREÇO TOTAL</strong>
-              <Input name="totalPrice" type="text" />
+              <CurrencyFormat
+                disabled
+                thousandSeparator={false}
+                prefix="R$"
+                suffix=",00"
+                name="totalPrice"
+                placeholder="Preço total"
+                value={checkTotalPrice}
+              />
             </div>
           </div>
         </Wrapper>

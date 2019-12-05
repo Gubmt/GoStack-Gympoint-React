@@ -25,9 +25,17 @@ export function* createRegistration({ payload }) {
 
 export function* updateRegistration({ payload }) {
   try {
-    const { student, plan_id, start_date, end_date, price } = payload;
+    const {
+      registration_id,
+      student_id,
+      plan_id,
+      start_date,
+      end_date,
+      price,
+    } = payload;
 
-    yield call(api.put, `registrations/${student}`, {
+    yield call(api.put, `registrations/${registration_id}`, {
+      student_id,
       plan_id,
       startDate: start_date,
       endDate: end_date,
