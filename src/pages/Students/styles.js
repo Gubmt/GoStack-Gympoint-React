@@ -37,6 +37,7 @@ export const Container = styled.div`
         margin-left: 16px;
         padding: 10px;
         color: #000;
+        background: #fff url('search.svg') no-repeat 200px center;
 
         &::placeholder {
           color: #999;
@@ -50,6 +51,11 @@ export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
   padding: 20px 30px;
+
+  div.icon {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 export const StudentTable = styled.table`

@@ -50,6 +50,11 @@ export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
   padding: 20px 30px;
+
+  div.icon {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 export const RegistrationTable = styled.table`

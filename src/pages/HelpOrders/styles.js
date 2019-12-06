@@ -17,6 +17,11 @@ export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
   padding: 20px 30px;
+
+  div.icon {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 export const HelpTable = styled.table`
@@ -72,6 +77,13 @@ export const StyledModal = styled(Modal)`
       font-weight: bold;
       color: #444;
       margin-bottom: 8px;
+    }
+
+    span {
+      font-size: 14px;
+      color: #ee4d64;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
     p.modal {

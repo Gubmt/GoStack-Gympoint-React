@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdHelpOutline } from 'react-icons/md';
 import { FaCheckCircle } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
@@ -17,7 +17,11 @@ export default function ListRegistration() {
 
   useEffect(() => {
     async function loadRegistrations() {
-      const response = await api.get('/registrations');
+      const response = await api.get('/registrations', {
+        params: {
+          page,
+        },
+      });
 
       const data = response.data.map(reg => {
         return {
@@ -87,61 +91,69 @@ export default function ListRegistration() {
           prevPage={() => prevPage()}
           nextPage={() => nextPage()}
         />
-        <RegistrationTable>
-          <thead>
-            <tr>
-              <th className="student">ALUNO</th>
-              <th>PLANO</th>
-              <th>INÍCIO</th>
-              <th>TÉRMINO</th>
-              <th>ATIVA</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {registrations.map(registration => (
-              <tr key={registration.id}>
-                <td className="student">
-                  <span>{registration.student.name}</span>
-                </td>
-                <td>
-                  <span>{registration.plan.title}</span>
-                </td>
-                <td>
-                  <span>{registration.start_date}</span>
-                </td>
-                <td>
-                  <span>{registration.end_date}</span>
-                </td>
-                <td>
-                  <FaCheckCircle
-                    size={20}
-                    color={registration.active ? '#42cb59' : '#ddd'}
-                  />
-                </td>
-                <td>
-                  <div>
-                    <button
-                      id="left"
-                      type="button"
-                      onClick={() =>
-                        history.push(`/registrations/update/${registration.id}`)
-                      }
-                    >
-                      editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(registration.id)}
-                      type="button"
-                    >
-                      apagar
-                    </button>
-                  </div>
-                </td>
+        {registrations.length > 0 ? (
+          <RegistrationTable>
+            <thead>
+              <tr>
+                <th className="student">ALUNO</th>
+                <th>PLANO</th>
+                <th>INÍCIO</th>
+                <th>TÉRMINO</th>
+                <th>ATIVA</th>
+                <th />
               </tr>
-            ))}
-          </tbody>
-        </RegistrationTable>
+            </thead>
+            <tbody>
+              {registrations.map(registration => (
+                <tr key={registration.id}>
+                  <td className="student">
+                    <span>{registration.student.name}</span>
+                  </td>
+                  <td>
+                    <span>{registration.plan.title}</span>
+                  </td>
+                  <td>
+                    <span>{registration.start_date}</span>
+                  </td>
+                  <td>
+                    <span>{registration.end_date}</span>
+                  </td>
+                  <td>
+                    <FaCheckCircle
+                      size={20}
+                      color={registration.active ? '#42cb59' : '#ddd'}
+                    />
+                  </td>
+                  <td>
+                    <div>
+                      <button
+                        id="left"
+                        type="button"
+                        onClick={() =>
+                          history.push(
+                            `/registrations/update/${registration.id}`
+                          )
+                        }
+                      >
+                        editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(registration.id)}
+                        type="button"
+                      >
+                        apagar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </RegistrationTable>
+        ) : (
+          <div className="icon">
+            <MdHelpOutline size="400px" color="#DDD" />
+          </div>
+        )}
       </Wrapper>
     </Container>
   );

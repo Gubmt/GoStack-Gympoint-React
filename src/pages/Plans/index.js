@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdHelpOutline } from 'react-icons/md';
 import history from '~/services/history';
 
 import Page from '~/components/Page';
@@ -19,6 +19,8 @@ export default function Plans() {
 
       const data = response.data.map(plan => ({
         ...plan,
+        durationFormatted:
+          plan.duration > 1 ? `${plan.duration} meses` : `${plan.duration} mês`,
         priceFormatted: formatPrice(plan.price),
       }));
 
@@ -37,7 +39,7 @@ export default function Plans() {
           page,
         },
       });
-      console.tron.log(response.data);
+
       const data = response.data.map(plan => ({
         ...plan,
         priceFormatted: formatPrice(plan.price),
@@ -75,45 +77,54 @@ export default function Plans() {
           prevPage={() => prevPage()}
           nextPage={() => nextPage()}
         />
-        <PlanTable>
-          <thead>
-            <tr>
-              <th>TÍTULO</th>
-              <th>DURAÇÃO</th>
-              <th className="price">VALOR p/ MÊS</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {plans.map(plan => (
-              <tr key={plan.id}>
-                <td>
-                  <span>{plan.title}</span>
-                </td>
-                <td>
-                  <span>{plan.duration}</span>
-                </td>
-                <td className="age">
-                  <span>{plan.priceFormatted}</span>
-                </td>
-                <td>
-                  <div>
-                    <button
-                      onClick={() => history.push(`/plans/update/${plan.id}`)}
-                      id="left"
-                      type="button"
-                    >
-                      editar
-                    </button>
-                    <button onClick={() => handleDelete(plan.id)} type="button">
-                      apagar
-                    </button>
-                  </div>
-                </td>
+        {plans.length > 0 ? (
+          <PlanTable>
+            <thead>
+              <tr>
+                <th className="title">TÍTULO</th>
+                <th>DURAÇÃO</th>
+                <th className="price">VALOR p/ MÊS</th>
+                <th />
               </tr>
-            ))}
-          </tbody>
-        </PlanTable>
+            </thead>
+            <tbody>
+              {plans.map(plan => (
+                <tr key={plan.id}>
+                  <td className="title">
+                    <span>{plan.title}</span>
+                  </td>
+                  <td>
+                    <span>{plan.durationFormatted}</span>
+                  </td>
+                  <td className="age">
+                    <span>{plan.priceFormatted}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <button
+                        onClick={() => history.push(`/plans/update/${plan.id}`)}
+                        id="left"
+                        type="button"
+                      >
+                        editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(plan.id)}
+                        type="button"
+                      >
+                        apagar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </PlanTable>
+        ) : (
+          <div className="icon">
+            <MdHelpOutline size="400px" color="#DDD" />
+          </div>
+        )}
       </Wrapper>
     </Container>
   );

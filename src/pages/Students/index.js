@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdHelpOutline, MdSearch } from 'react-icons/md';
 import history from '~/services/history';
 
 import Page from '~/components/Page';
@@ -97,50 +97,56 @@ export default function List() {
           prevPage={() => prevPage()}
           nextPage={() => nextPage()}
         />
-        <StudentTable>
-          <thead>
-            <tr>
-              <th>NOME</th>
-              <th>E-MAIL</th>
-              <th className="age">IDADE</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => (
-              <tr key={student.id}>
-                <td>
-                  <span>{student.name}</span>
-                </td>
-                <td>
-                  <span>{student.email}</span>
-                </td>
-                <td className="age">
-                  <span>{student.age}</span>
-                </td>
-                <td>
-                  <div>
-                    <button
-                      onClick={() =>
-                        history.push(`/students/update/${student.id}`)
-                      }
-                      id="left"
-                      type="button"
-                    >
-                      editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(student.id)}
-                      type="button"
-                    >
-                      apagar
-                    </button>
-                  </div>
-                </td>
+        {students.length > 0 ? (
+          <StudentTable>
+            <thead>
+              <tr>
+                <th>NOME</th>
+                <th>E-MAIL</th>
+                <th className="age">IDADE</th>
+                <th />
               </tr>
-            ))}
-          </tbody>
-        </StudentTable>
+            </thead>
+            <tbody>
+              {students.map(student => (
+                <tr key={student.id}>
+                  <td>
+                    <span>{student.name}</span>
+                  </td>
+                  <td>
+                    <span>{student.email}</span>
+                  </td>
+                  <td className="age">
+                    <span>{student.age}</span>
+                  </td>
+                  <td>
+                    <div>
+                      <button
+                        onClick={() =>
+                          history.push(`/students/update/${student.id}`)
+                        }
+                        id="left"
+                        type="button"
+                      >
+                        editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student.id)}
+                        type="button"
+                      >
+                        apagar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </StudentTable>
+        ) : (
+          <div className="icon">
+            <MdHelpOutline size="400px" color="#DDD" />
+          </div>
+        )}
       </Wrapper>
     </Container>
   );

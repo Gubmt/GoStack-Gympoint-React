@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
-
+import { MdHelpOutline } from 'react-icons/md';
 import { Container, Wrapper, HelpTable, StyledModal } from './styles';
 import api from '~/services/api';
 
 import { answerRequest } from '~/store/modules/helpOrder/actions';
+
+import Page from '~/components/Page';
 
 const schema = Yup.object().shape({
   answer: Yup.string().required('A resposta é obrigatória'),
@@ -17,6 +19,8 @@ export default function HelpOrders() {
   const [helps, setHelps] = useState([]);
   const [question, setQuestion] = useState([]);
   const [modal, setModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(false);
 
   const loading = useSelector(state => state.helpOrder.loading);
 
@@ -25,9 +29,12 @@ export default function HelpOrders() {
       const response = await api.get('/help-orders');
 
       setHelps(response.data);
+
+      if (response.data.length < 10) setLastPage(true);
+      else setLastPage(false);
     }
     loadHelps();
-  }, [helps]);
+  }, []);
 
   function handlequestion(id) {
     const data = helps.find(h => h.id === id);
@@ -40,6 +47,16 @@ export default function HelpOrders() {
     if (!loading) setModal(false);
   }
 
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
+
   return (
     <>
       <Container>
@@ -47,33 +64,45 @@ export default function HelpOrders() {
           <h1>Pedidos de auxílio</h1>
         </header>
         <Wrapper>
-          <HelpTable>
-            <thead>
-              <tr>
-                <th>ALUNO</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {helps.map(help => (
-                <tr key={help.id}>
-                  <td>
-                    <span>{help.student.name}</span>
-                  </td>
-                  <td>
-                    <div>
-                      <button
-                        onClick={() => handlequestion(help.id)}
-                        type="button"
-                      >
-                        responder
-                      </button>
-                    </div>
-                  </td>
+          <Page
+            page={page}
+            lastPage={lastPage}
+            prevPage={() => prevPage()}
+            nextPage={() => nextPage()}
+          />
+          {helps.length > 0 ? (
+            <HelpTable>
+              <thead>
+                <tr>
+                  <th>ALUNO</th>
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </HelpTable>
+              </thead>
+              <tbody>
+                {helps.map(help => (
+                  <tr key={help.id}>
+                    <td>
+                      <span>{help.student.name}</span>
+                    </td>
+                    <td>
+                      <div>
+                        <button
+                          onClick={() => handlequestion(help.id)}
+                          type="button"
+                        >
+                          responder
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </HelpTable>
+          ) : (
+            <div className="icon">
+              <MdHelpOutline size="400px" color="#DDD" />
+            </div>
+          )}
         </Wrapper>
         <StyledModal isOpen={modal} ariaHideApp={false}>
           <div className="modal">
