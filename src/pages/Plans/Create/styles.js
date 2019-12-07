@@ -42,7 +42,7 @@ export const Container = styled.div`
 export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
-  padding: 20px 30px;
+  padding: 30px 30px 10px 30px;
   border-radius: 4px;
   display: flex;
   flex-direction: column;

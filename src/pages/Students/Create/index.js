@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import * as Yup from 'yup';
 import history from '~/services/history';
@@ -14,11 +14,9 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .email('Insira um email válido')
     .required('O email é obrigatório'),
-  age: Yup.number()
-    .max(100, 'Informe uma idade válida.')
-    .required('A idade é obrigatória'),
-  weight: Yup.number().required('O peso é obrigatório'),
-  height: Yup.number().required('A altura é obrigatória'),
+  age: Yup.string().required('A idade é obrigatória'),
+  weight: Yup.string().required('O peso é obrigatório'),
+  height: Yup.string().required('A altura é obrigatória'),
 });
 
 export default function CreateStudents() {
@@ -55,15 +53,30 @@ export default function CreateStudents() {
           <div>
             <div className="input">
               <strong>IDADE</strong>
-              <Input name="age" type="text" placeholder="Idade do aluno" />
+              <Input
+                name="age"
+                type="number"
+                min="0"
+                placeholder="Idade do aluno"
+              />
             </div>
             <div className="input">
               <strong>PESO(em kg)</strong>
-              <Input name="weight" type="text" placeholder="Peso do aluno" />
+              <Input
+                name="weight"
+                type="number"
+                min="0"
+                placeholder="Peso do aluno"
+              />
             </div>
             <div className="input">
               <strong>ALTURA</strong>
-              <Input name="height" type="text" placeholder="Altura do aluno" />
+              <Input
+                name="height"
+                type="number"
+                min="0"
+                placeholder="Altura do aluno"
+              />
             </div>
           </div>
         </Wrapper>

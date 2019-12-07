@@ -15,7 +15,7 @@ import { Container, Wrapper } from './styles';
 
 const schema = Yup.object().shape({
   title: Yup.string().required('O título é obrigatório'),
-  duration: Yup.number().required('A duração é obrigatória'),
+  duration: Yup.string().required('A duração é obrigatória'),
   price: Yup.string().required('O preço é obrigatório'),
 });
 
@@ -57,7 +57,7 @@ export default function CreatePlans() {
 
         <Wrapper>
           <strong>TÍTULO DO PLANO</strong>
-          <Input name="title" type="name" placeholder="Título do plano" />
+          <Input name="title" type="text" placeholder="Título do plano" />
           <div>
             <div className="input">
               <strong>DURAÇÃO EM MESES</strong>
@@ -82,7 +82,7 @@ export default function CreatePlans() {
                   setCheckPrice(value);
                   return value;
                 }}
-                inputValue={checkPrice}
+                inputvalue={checkPrice}
                 placeholder="Preço mensal"
               />
             </div>

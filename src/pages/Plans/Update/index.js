@@ -3,6 +3,7 @@ import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import CurrencyFormat from 'react-currency-format';
+import * as Yup from 'yup';
 import history from '~/services/history';
 
 import Currency from '~/components/Currency';
@@ -11,6 +12,12 @@ import { Container, Wrapper } from './styles';
 import api from '~/services/api';
 
 import { updatePlanRequest } from '~/store/modules/plan/actions';
+
+const schema = Yup.object().shape({
+  title: Yup.string().required('O título é obrigatório'),
+  duration: Yup.string().required('A duração é obrigatória'),
+  price: Yup.string().required('O preço é obrigatório'),
+});
 
 export default function UpdatePlans() {
   const [plan, setPlan] = useState({});
@@ -49,7 +56,7 @@ export default function UpdatePlans() {
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form schema={schema} onSubmit={handleSubmit}>
         <header>
           <h1>Edição de plano</h1>
           <div>
@@ -93,7 +100,7 @@ export default function UpdatePlans() {
                   setCheckPrice(value);
                   return value;
                 }}
-                inputValue={checkPrice}
+                inputvalue={checkPrice}
                 placeholder={plan.price}
               />
             </div>

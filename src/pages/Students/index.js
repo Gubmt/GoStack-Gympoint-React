@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input } from '@rocketseat/unform';
-import { MdAdd, MdHelpOutline, MdSearch } from 'react-icons/md';
+import { MdAdd, MdHelpOutline } from 'react-icons/md';
 import history from '~/services/history';
 
 import Page from '~/components/Page';

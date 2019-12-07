@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import { format, addMonths, parseISO } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import * as Yup from 'yup';
 import DatePicker from '~/components/DatePicker';
 import SelectStudent from '~/components/SelectStudent';
 import SelectPlan from '~/components/SelectPlan';
@@ -16,6 +17,12 @@ import { updateRegistrationRequest } from '~/store/modules/registration/actions'
 
 import { Container, Wrapper } from './styles';
 import api from '~/services/api';
+
+const schema = Yup.object().shape({
+  student: Yup.string().required('O aluno é obrigatório'),
+  plan: Yup.string().required('O plano é obrigatório'),
+  start_date: Yup.string().required('A data é obrigatória'),
+});
 
 export default function UpdateRegistrations() {
   const [selected, setSelected] = useState();
@@ -115,7 +122,7 @@ export default function UpdateRegistrations() {
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form schema={schema} onSubmit={handleSubmit}>
         <header>
           <h1>Edição de matrícula</h1>
           <div>
@@ -136,7 +143,7 @@ export default function UpdateRegistrations() {
           <div className="student">
             <strong>ALUNO</strong>
             <SelectStudent
-              name="student_id"
+              name="student"
               options={studentOptions}
               inputChange={studentOptions}
               placeholder={registration.student_name}
@@ -147,7 +154,7 @@ export default function UpdateRegistrations() {
               <strong>PLANO</strong>
               <SelectPlan
                 className="plan"
-                name="plan_id"
+                name="plan"
                 options={plans}
                 inputChange={handlePlanChange}
                 placeholder={registration.plan_title}
@@ -184,7 +191,7 @@ export default function UpdateRegistrations() {
                 thousandSeparator={false}
                 prefix="R$"
                 suffix=",00"
-                inputValue={totalPrice.newTotalPrice}
+                inputvalue={totalPrice.newTotalPrice}
                 value={totalPrice.newTotalPrice}
                 placeholder={registration.price}
                 disabled

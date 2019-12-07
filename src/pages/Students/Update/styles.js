@@ -42,7 +42,7 @@ export const Container = styled.div`
 export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
-  padding: 20px 30px;
+  padding: 30px 30px 10px 30px;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -60,6 +60,13 @@ export const Wrapper = styled.div`
     height: 44px;
     border: 1px solid #ddd;
     border-radius: 4px;
+  }
+
+  span {
+    color: #ee4d64;
+    align-self: flex-start;
+    margin: -15px 0 15px;
+    font-weight: bold;
   }
 
   div {

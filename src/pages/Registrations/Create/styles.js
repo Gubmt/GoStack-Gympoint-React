@@ -40,7 +40,7 @@ export const Container = styled.div`
 export const Wrapper = styled.div`
   background: #fff;
   margin-top: 20px;
-  padding: 20px 30px;
+  padding: 30px;
   border-radius: 4px;
   flex: 1;
 
@@ -91,7 +91,7 @@ export const Wrapper = styled.div`
   span {
     color: #ee4d64;
     align-self: flex-start;
-    margin: -15px 0 15px;
+    margin: 0 0 15px;
     font-weight: bold;
   }
 `;

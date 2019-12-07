@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/locale/pt-BR';
 import { useField } from '@rocketseat/unform';
@@ -9,7 +9,7 @@ registerLocale('pt', pt);
 
 export default function DatePicker({ name, selected, inputChange, customInput, placeholder}) { // eslint-disable-line
   const ref = useRef(null);
-  const { fieldName, registerField, error } = useField(name);
+  const { fieldName, registerField } = useField(name);
 
   useEffect(() => {
     registerField({
@@ -34,7 +34,6 @@ export default function DatePicker({ name, selected, inputChange, customInput, p
         dateFormat="dd/MM/yyyy"
         placeholderText={placeholder}
       />
-      {error && <span>{error}</span>}
     </>
   );
 }

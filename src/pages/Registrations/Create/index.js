@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import { format, addMonths } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import * as Yup from 'yup';
 import DatePicker from '~/components/DatePicker';
 import SelectStudent from '~/components/SelectStudent';
 import SelectPlan from '~/components/SelectPlan';
@@ -14,6 +15,12 @@ import { createRegistrationRequest } from '~/store/modules/registration/actions'
 
 import { Container, Wrapper } from './styles';
 import api from '~/services/api';
+
+const schema = Yup.object().shape({
+  student: Yup.string().required('O aluno é obrigatório'),
+  plan: Yup.string().required('O plano é obrigatório'),
+  start_date: Yup.string().required('A data é obrigatória'),
+});
 
 export default function CreateRegistrations() {
   const [selected, setSelected] = useState();
@@ -88,7 +95,7 @@ export default function CreateRegistrations() {
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form schema={schema} onSubmit={handleSubmit}>
         <header>
           <h1>Cadastro de matrícula</h1>
           <div>
@@ -120,7 +127,7 @@ export default function CreateRegistrations() {
               <strong>PLANO</strong>
               <SelectPlan
                 className="plan"
-                name="plan_id"
+                name="plan"
                 options={plans}
                 inputChange={handlePlanChange}
                 placeholder="Selecione o plano"
@@ -133,7 +140,7 @@ export default function CreateRegistrations() {
                 name="start_date"
                 id="date"
                 inputChange={handleDateChange}
-                customInput={<Input className="input" />}
+                customInput={<Input name="date" className="input" />}
                 placeholder="Selecione a data"
                 selected={selected}
               />
@@ -156,7 +163,7 @@ export default function CreateRegistrations() {
                 thousandSeparator={false}
                 prefix="R$"
                 suffix=",00"
-                inputValue={totalPrice.newTotalPrice}
+                inputvalue={totalPrice.newTotalPrice}
                 value={totalPrice.newTotalPrice}
                 disabled
               />

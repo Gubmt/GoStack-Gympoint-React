@@ -18,7 +18,7 @@ const customStyles = {
 
 export default function Currency({
   name,
-  inputValue,
+  inputvalue,
   label,
   thousandSeparator,
   prefix,
@@ -34,7 +34,7 @@ export default function Currency({
     registerField({
       name: fieldName,
       ref: ref.current,
-      path: 'props.inputValue',
+      path: 'props.inputvalue',
     });
   }, [ref.current, fieldName]); // eslint-disable-line
 
@@ -48,7 +48,7 @@ export default function Currency({
         prefix="R$"
         suffix=",00"
         onValueChange={onValueChange}
-        inputValue={inputValue}
+        inputvalue={inputvalue}
         placeholder={placeholder}
         isNumericString
         styles={customStyles}
