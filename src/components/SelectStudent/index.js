@@ -21,7 +21,7 @@ export default function SelectStudent({
   label,
   options,
   inputChange,
-  ...rest
+  placeholder,
 }) {
   const ref = useRef(null);
   const { fieldName, registerField, error } = useField(name);
@@ -52,7 +52,7 @@ export default function SelectStudent({
         getOptionValue={option => option.id}
         getOptionLabel={option => option.name}
         styles={customStyles}
-        {...rest}
+        placeholder={placeholder}
       />
 
       {error && <span>{error}</span>}

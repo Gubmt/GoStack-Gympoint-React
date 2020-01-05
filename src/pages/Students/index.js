@@ -22,7 +22,7 @@ export default function List() {
       });
 
       setStudents(response.data);
-      if (response.data.length < 10) setLastPage(true);
+      if (response.data.length < 5) setLastPage(true);
       else setLastPage(false);
     }
     loadStudents();
@@ -144,7 +144,7 @@ export default function List() {
           </StudentTable>
         ) : (
           <div className="icon">
-            <MdHelpOutline size="400px" color="#DDD" />
+            <MdHelpOutline size="300px" color="#DDD" />
           </div>
         )}
       </Wrapper>

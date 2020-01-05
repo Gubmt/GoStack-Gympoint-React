@@ -75,6 +75,7 @@ export default function CreateStudents() {
                 name="height"
                 type="number"
                 min="0"
+                step="0.01"
                 placeholder="Altura do aluno"
               />
             </div>

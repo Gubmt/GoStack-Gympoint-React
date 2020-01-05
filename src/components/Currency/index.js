@@ -44,9 +44,9 @@ export default function Currency({
 
       <CurrencyFormat
         name={fieldName}
-        thousandSeparator={false}
-        prefix="R$"
-        suffix=",00"
+        thousandSeparator={thousandSeparator}
+        prefix={prefix}
+        suffix={suffix}
         onValueChange={onValueChange}
         inputvalue={inputvalue}
         placeholder={placeholder}

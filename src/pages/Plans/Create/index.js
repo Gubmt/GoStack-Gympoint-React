@@ -65,7 +65,6 @@ export default function CreatePlans() {
                 name="duration"
                 type="number"
                 min="0"
-                max="12"
                 placeholder="Duração do plano"
                 onChange={e => setCheckDuration(e.target.value)}
               />

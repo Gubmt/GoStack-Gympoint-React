@@ -3,7 +3,6 @@ import { Form, Input } from '@rocketseat/unform';
 import { useDispatch } from 'react-redux';
 import { MdChevronLeft, MdDone } from 'react-icons/md';
 import { format, addMonths } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import * as Yup from 'yup';
 import DatePicker from '~/components/DatePicker';
 import SelectStudent from '~/components/SelectStudent';
@@ -18,7 +17,7 @@ import api from '~/services/api';
 
 const schema = Yup.object().shape({
   student: Yup.string().required('O aluno é obrigatório'),
-  plan: Yup.string().required('O plano é obrigatório'),
+  plan_id: Yup.string().required('O plano é obrigatório'),
   start_date: Yup.string().required('A data é obrigatória'),
 });
 
@@ -32,8 +31,6 @@ export default function CreateRegistrations() {
 
   const dispatch = useDispatch();
 
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   useEffect(() => {
     async function loadPlans() {
       const response = await api.get('/plans');
@@ -43,18 +40,17 @@ export default function CreateRegistrations() {
   }, []);
 
   useEffect(() => {
+    console.tron.log(selected);
     if (selected && plan) {
-      const newEndDate = utcToZonedTime(
-        addMonths(selected, plan.duration),
-        timezone
-      );
+      const newEndDate = addMonths(selected, plan.duration);
+
       const newEndDateFormatted = format(newEndDate, "dd'/'MM'/'yyyy");
       setEndDate({ newEndDate, newEndDateFormatted });
 
       const newTotalPrice = plan.price * plan.duration;
       setTotalPrice({ newTotalPrice });
     }
-  }, [plan, selected, timezone]);
+  }, [plan, selected]);
 
   const loadStudents = async inputValue => {
     const students = await api.get('/students');
@@ -78,7 +74,7 @@ export default function CreateRegistrations() {
       createRegistrationRequest(
         student,
         plan_id,
-        start_date,
+        new Date(start_date),
         endDate.newEndDate,
         totalPrice.newTotalPrice
       )
@@ -127,7 +123,7 @@ export default function CreateRegistrations() {
               <strong>PLANO</strong>
               <SelectPlan
                 className="plan"
-                name="plan"
+                name="plan_id"
                 options={plans}
                 inputChange={handlePlanChange}
                 placeholder="Selecione o plano"
@@ -140,7 +136,7 @@ export default function CreateRegistrations() {
                 name="start_date"
                 id="date"
                 inputChange={handleDateChange}
-                customInput={<Input name="date" className="input" />}
+                customInput={<Input className="input" />}
                 placeholder="Selecione a data"
                 selected={selected}
               />

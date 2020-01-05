@@ -13,21 +13,29 @@ export default function Plans() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(false);
 
+  function dateFormatted(response) {
+    const data = response.data.map(plan => ({
+      ...plan,
+      durationFormatted:
+        plan.duration > 1 ? `${plan.duration} meses` : `${plan.duration} mês`,
+      priceFormatted: formatPrice(plan.price),
+    }));
+
+    setPlans(data);
+
+    if (response.data.length < 5) setLastPage(true);
+    else setLastPage(false);
+  }
+
   useEffect(() => {
     async function loadPlans() {
-      const response = await api.get('/plans');
+      const response = await api.get('/plans', {
+        params: {
+          page,
+        },
+      });
 
-      const data = response.data.map(plan => ({
-        ...plan,
-        durationFormatted:
-          plan.duration > 1 ? `${plan.duration} meses` : `${plan.duration} mês`,
-        priceFormatted: formatPrice(plan.price),
-      }));
-
-      setPlans(data);
-
-      if (response.data.length < 10) setLastPage(true);
-      else setLastPage(false);
+      dateFormatted(response);
     }
     loadPlans();
   }, [page]);
@@ -40,12 +48,7 @@ export default function Plans() {
         },
       });
 
-      const data = response.data.map(plan => ({
-        ...plan,
-        priceFormatted: formatPrice(plan.price),
-      }));
-
-      setPlans(data);
+      dateFormatted(response);
     }
   }
 

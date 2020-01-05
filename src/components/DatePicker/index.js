@@ -7,7 +7,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 registerLocale('pt', pt);
 
-export default function DatePicker({ name, selected, inputChange, customInput, placeholder}) { // eslint-disable-line
+export default function DatePicker({
+  name,
+  selected,
+  inputChange,
+  customInput,
+  placeholder,
+}) {
   const ref = useRef(null);
   const { fieldName, registerField } = useField(name);
 
@@ -25,7 +31,6 @@ export default function DatePicker({ name, selected, inputChange, customInput, p
   return (
     <>
       <ReactDatePicker
-        ref={ref}
         name={fieldName}
         selected={selected}
         onChange={inputChange}
@@ -33,6 +38,7 @@ export default function DatePicker({ name, selected, inputChange, customInput, p
         locale="pt"
         dateFormat="dd/MM/yyyy"
         placeholderText={placeholder}
+        ref={ref}
       />
     </>
   );

@@ -15,6 +15,27 @@ export default function ListRegistration() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(false);
 
+  function dataFormatted(response) {
+    const data = response.data.map(reg => {
+      return {
+        id: reg.id,
+        active: reg.active,
+        start_date: format(parseISO(reg.start_date), "d 'de' MMMM 'de' yyyy", {
+          locale: pt,
+        }),
+        end_date: format(parseISO(reg.end_date), "d 'de' MMMM 'de' yyyy", {
+          locale: pt,
+        }),
+        student: reg.student,
+        plan: reg.plan,
+      };
+    });
+    setRegistrations(data);
+
+    if (response.data.length < 5) setLastPage(true);
+    else setLastPage(false);
+  }
+
   useEffect(() => {
     async function loadRegistrations() {
       const response = await api.get('/registrations', {
@@ -23,31 +44,10 @@ export default function ListRegistration() {
         },
       });
 
-      const data = response.data.map(reg => {
-        return {
-          id: reg.id,
-          active: reg.active,
-          start_date: format(
-            parseISO(reg.start_date),
-            "d 'de' MMMM 'de' yyyy",
-            {
-              locale: pt,
-            }
-          ),
-          end_date: format(parseISO(reg.end_date), "d 'de' MMMM 'de' yyyy", {
-            locale: pt,
-          }),
-          student: reg.student,
-          plan: reg.plan,
-        };
-      });
-      setRegistrations(data);
-
-      if (response.data.length < 10) setLastPage(true);
-      else setLastPage(false);
+      dataFormatted(response);
     }
     loadRegistrations();
-  }, [page]);
+  }, [page]); //eslint-disable-line
 
   async function handleDelete(id) {
     if (window.confirm('Você deseja deletar essa matrícula?')) {
@@ -56,7 +56,7 @@ export default function ListRegistration() {
           page,
         },
       });
-      setRegistrations(response.data);
+      dataFormatted(response);
     }
   }
 
@@ -151,7 +151,7 @@ export default function ListRegistration() {
           </RegistrationTable>
         ) : (
           <div className="icon">
-            <MdHelpOutline size="400px" color="#DDD" />
+            <MdHelpOutline size="300px" color="#DDD" />
           </div>
         )}
       </Wrapper>

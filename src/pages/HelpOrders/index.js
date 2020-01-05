@@ -21,20 +21,28 @@ export default function HelpOrders() {
   const [modal, setModal] = useState(false);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(false);
+  const [reload, setReload] = useState(false);
 
   const loading = useSelector(state => state.helpOrder.loading);
 
+  async function loadHelps() {
+    const response = await api.get('/help-orders', {
+      params: {
+        page,
+      },
+    });
+
+    setHelps(response.data);
+
+    if (response.data.length < 5) setLastPage(true);
+    else setLastPage(false);
+
+    setReload(false);
+  }
+
   useEffect(() => {
-    async function loadHelps() {
-      const response = await api.get('/help-orders');
-
-      setHelps(response.data);
-
-      if (response.data.length < 10) setLastPage(true);
-      else setLastPage(false);
-    }
     loadHelps();
-  }, []);
+  }, [page, reload]); //eslint-disable-line
 
   function handlequestion(id) {
     const data = helps.find(h => h.id === id);
@@ -44,7 +52,9 @@ export default function HelpOrders() {
 
   function handleSubmit({ answer }) {
     dispatch(answerRequest(question.id, answer));
-    if (!loading) setModal(false);
+
+    setModal(false);
+    setReload(true);
   }
 
   function prevPage() {
@@ -109,7 +119,7 @@ export default function HelpOrders() {
             <span className="modal">PERGUNTA DO ALUNO</span>
             <p className="modal"> {question.question}</p>
             <span className="modal">SUA RESPOSTA</span>
-            <Form onSubmit={handleSubmit} schema={schema}>
+            <Form onSubmit={handleSubmit} schema={schema} loading={loading}>
               <Input multiline name="answer" className="modal" />
               <button className="modal" type="submit">
                 Responder aluno

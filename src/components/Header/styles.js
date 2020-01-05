@@ -37,7 +37,7 @@ export const Content = styled.div`
       a {
         margin-right: 20px;
         font-weight: bold;
-        color: #999;
+        color: ${props => (props.current ? '#000' : '#999')};
       }
     }
   }

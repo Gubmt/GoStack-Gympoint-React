@@ -21,6 +21,7 @@ const schema = Yup.object().shape({
 
 export default function UpdatePlans() {
   const [plan, setPlan] = useState({});
+  const [checkTitle, setCheckTitle] = useState();
   const [checkDuration, setCheckDuration] = useState();
   const [checkPrice, setCheckPrice] = useState();
   const [checkTotalPrice, setCheckTotalPrice] = useState();
@@ -30,8 +31,6 @@ export default function UpdatePlans() {
     async function loadPlans() {
       const id = window.location.pathname.split('/');
 
-      console.tron.log(id);
-
       const plans = await api.get('/plans');
 
       setPlan(
@@ -39,9 +38,13 @@ export default function UpdatePlans() {
           return p.id === Number(id[3]);
         })
       );
+
+      setCheckTitle(plan.title);
+      setCheckDuration(plan.duration);
+      setCheckPrice(plan.price);
     }
     loadPlans();
-  }, []);
+  }, [plan.duration, plan.price, plan.title]);
 
   useEffect(() => {
     if (checkDuration && checkPrice) {
@@ -75,7 +78,12 @@ export default function UpdatePlans() {
 
         <Wrapper>
           <strong>TÍTULO DO PLANO</strong>
-          <Input name="title" type="name" placeholder={plan.title} />
+          <Input
+            name="title"
+            type="name"
+            value={checkTitle}
+            onChange={e => setCheckTitle(e.target.value)}
+          />
           <div>
             <div className="input">
               <strong>DURAÇÃO (em meses)</strong>
@@ -83,8 +91,7 @@ export default function UpdatePlans() {
                 name="duration"
                 type="number"
                 min="0"
-                max="12"
-                placeholder={plan.duration}
+                value={checkDuration}
                 onChange={e => setCheckDuration(e.target.value)}
               />
             </div>
@@ -101,7 +108,7 @@ export default function UpdatePlans() {
                   return value;
                 }}
                 inputvalue={checkPrice}
-                placeholder={plan.price}
+                value={checkPrice}
               />
             </div>
             <div className="input">

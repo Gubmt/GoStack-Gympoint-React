@@ -21,6 +21,11 @@ const schema = Yup.object().shape({
 
 export default function UpdateStudents() {
   const [student, setStudent] = useState({});
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,9 +38,21 @@ export default function UpdateStudents() {
           return p.id === Number(id[3]);
         })
       );
+
+      setName(student.name);
+      setEmail(student.email);
+      setAge(student.age);
+      setWeight(student.weight);
+      setHeight(student.height);
     }
     loadStudents();
-  }, []);
+  }, [
+    student.age,
+    student.email,
+    student.height,
+    student.name,
+    student.weight,
+  ]);
 
   function handleSubmit({ name, email, age, weight, height }) {
     const { id } = student;
@@ -63,9 +80,19 @@ export default function UpdateStudents() {
 
         <Wrapper>
           <strong>NOME COMPLETO</strong>
-          <Input name="name" type="name" placeholder={student.name} />
+          <Input
+            name="name"
+            type="name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
           <strong>ENDEREÇO DE E-MAIL</strong>
-          <Input name="email" type="email" placeholder={student.email} />
+          <Input
+            name="email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
           <div>
             <div className="input">
               <strong>IDADE</strong>
@@ -73,7 +100,8 @@ export default function UpdateStudents() {
                 name="age"
                 type="number"
                 min="0"
-                placeholder={student.age}
+                value={age}
+                onChange={e => setAge(e.target.value)}
               />
             </div>
             <div className="input">
@@ -82,7 +110,8 @@ export default function UpdateStudents() {
                 name="weight"
                 type="number"
                 min="0"
-                placeholder={student.weight}
+                value={weight}
+                onChange={e => setWeight(e.target.value)}
               />
             </div>
             <div className="input">
@@ -91,7 +120,9 @@ export default function UpdateStudents() {
                 name="height"
                 type="number"
                 min="0"
-                placeholder={student.height}
+                step="0.01"
+                value={height}
+                onChange={e => setHeight(e.target.value)}
               />
             </div>
           </div>

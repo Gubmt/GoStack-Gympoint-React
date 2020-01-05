@@ -19,8 +19,8 @@ import { Container, Wrapper } from './styles';
 import api from '~/services/api';
 
 const schema = Yup.object().shape({
-  student: Yup.string().required('O aluno é obrigatório'),
-  plan: Yup.string().required('O plano é obrigatório'),
+  student_id: Yup.string().required('O aluno é obrigatório'),
+  plan_id: Yup.string().required('O plano é obrigatório'),
   start_date: Yup.string().required('A data é obrigatória'),
 });
 
@@ -54,6 +54,13 @@ export default function UpdateRegistrations() {
       const data = registrations.data.find(p => {
         return p.id === Number(id[3]);
       });
+
+      setEndDate({
+        newEndDate: data.end_date,
+        newEndDateFormatted: format(parseISO(data.end_date), "dd'/'MM'/'yyyy"),
+      });
+
+      setTotalPrice({ newTotalPrice: data.price });
 
       setRegistration({
         registration_id: data.id,
@@ -105,7 +112,7 @@ export default function UpdateRegistrations() {
         registration.registration_id,
         student_id,
         plan_id,
-        start_date,
+        new Date(start_date),
         endDate.newEndDate,
         totalPrice.newTotalPrice
       )
@@ -143,7 +150,7 @@ export default function UpdateRegistrations() {
           <div className="student">
             <strong>ALUNO</strong>
             <SelectStudent
-              name="student"
+              name="student_id"
               options={studentOptions}
               inputChange={studentOptions}
               placeholder={registration.student_name}
@@ -154,7 +161,7 @@ export default function UpdateRegistrations() {
               <strong>PLANO</strong>
               <SelectPlan
                 className="plan"
-                name="plan"
+                name="plan_id"
                 options={plans}
                 inputChange={handlePlanChange}
                 placeholder={registration.plan_title}
@@ -179,7 +186,6 @@ export default function UpdateRegistrations() {
                 name="end_date"
                 type="text"
                 value={endDate.newEndDateFormatted}
-                placeholder={registration.end_date}
                 disabled
               />
             </div>
@@ -193,7 +199,6 @@ export default function UpdateRegistrations() {
                 suffix=",00"
                 inputvalue={totalPrice.newTotalPrice}
                 value={totalPrice.newTotalPrice}
-                placeholder={registration.price}
                 disabled
               />
             </div>
