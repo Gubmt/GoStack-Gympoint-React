@@ -34,13 +34,12 @@ export default function CreateRegistrations() {
   useEffect(() => {
     async function loadPlans() {
       const response = await api.get('/plans');
-      setPlans(response.data);
+      setPlans(response.data.plans);
     }
     loadPlans();
   }, []);
 
   useEffect(() => {
-    console.tron.log(selected);
     if (selected && plan) {
       const newEndDate = addMonths(selected, plan.duration);
 
@@ -53,7 +52,7 @@ export default function CreateRegistrations() {
   }, [plan, selected]);
 
   const loadStudents = async inputValue => {
-    const students = await api.get('/students');
+    const students = await api.get('/students/registrations');
     const labels = students.data.map(s => {
       return { id: s.id, name: s.name };
     });

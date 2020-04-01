@@ -40,7 +40,7 @@ export default function UpdateRegistrations() {
   useEffect(() => {
     async function loadPlans() {
       const response = await api.get('/plans');
-      setPlans(response.data);
+      setPlans(response.data.plans);
     }
     loadPlans();
   }, []);
@@ -51,7 +51,7 @@ export default function UpdateRegistrations() {
 
       const registrations = await api.get('/registrations');
 
-      const data = registrations.data.find(p => {
+      const data = registrations.data.registrations.find(p => {
         return p.id === Number(id[3]);
       });
 
@@ -91,7 +91,7 @@ export default function UpdateRegistrations() {
 
   const loadStudents = async inputValue => {
     const students = await api.get('/students');
-    const labels = students.data.map(s => {
+    const labels = students.data.students.map(s => {
       return { id: s.id, name: s.name };
     });
     const data = labels.find(s =>

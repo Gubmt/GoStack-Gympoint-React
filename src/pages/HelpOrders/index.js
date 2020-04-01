@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
@@ -20,42 +20,11 @@ export default function HelpOrders() {
   const [question, setQuestion] = useState([]);
   const [modal, setModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [total_pages, setTotal_pages] = useState(0);
+  const [total_list, setTotal_list] = useState(0);
   const [lastPage, setLastPage] = useState(false);
-  const [reload, setReload] = useState(false);
 
   const loading = useSelector(state => state.helpOrder.loading);
-
-  async function loadHelps() {
-    const response = await api.get('/help-orders', {
-      params: {
-        page,
-      },
-    });
-
-    setHelps(response.data);
-
-    if (response.data.length < 5) setLastPage(true);
-    else setLastPage(false);
-
-    setReload(false);
-  }
-
-  useEffect(() => {
-    loadHelps();
-  }, [page, reload]); //eslint-disable-line
-
-  function handlequestion(id) {
-    const data = helps.find(h => h.id === id);
-    setQuestion(data);
-    setModal(true);
-  }
-
-  function handleSubmit({ answer }) {
-    dispatch(answerRequest(question.id, answer));
-
-    setModal(false);
-    setReload(true);
-  }
 
   function prevPage() {
     if (page !== 1) setPage(page - 1);
@@ -65,6 +34,41 @@ export default function HelpOrders() {
     if (!lastPage) {
       setPage(page + 1);
     }
+  }
+
+  async function loadHelps() {
+    const response = await api.get('/help-orders', {
+      params: {
+        page,
+      },
+    });
+
+    setHelps(response.data.help_order);
+    setTotal_list(response.data.total_list);
+    setTotal_pages(response.data.total_pages);
+
+    if (total_pages <= page) setLastPage(true);
+    else setLastPage(false);
+  }
+
+  useEffect(() => {
+    loadHelps();
+  }, [page, total_pages]); //eslint-disable-line
+
+  useEffect(() => {
+    if (helps.length === 0) prevPage();
+  }, [helps.length]); //eslint-disable-line
+
+  function handlequestion(id) {
+    const data = helps.find(h => h.id === id);
+    setQuestion(data);
+    setModal(true);
+  }
+
+  function handleSubmit({ answer }) {
+    dispatch(answerRequest(question.id, answer));
+    setModal(false);
+    setHelps(helps.filter(item => item.id !== question.id));
   }
 
   return (

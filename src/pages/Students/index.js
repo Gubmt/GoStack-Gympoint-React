@@ -11,7 +11,19 @@ import api from '~/services/api';
 export default function List() {
   const [students, setStudents] = useState([]);
   const [page, setPage] = useState(1);
+  const [total_pages, setTotal_pages] = useState(0);
+  const [total_list, setTotal_list] = useState(0);
   const [lastPage, setLastPage] = useState(false);
+
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
 
   useEffect(() => {
     async function loadStudents() {
@@ -21,12 +33,14 @@ export default function List() {
         },
       });
 
-      setStudents(response.data);
-      if (response.data.length < 5) setLastPage(true);
+      setStudents(response.data.students);
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
+      if (total_pages <= page) setLastPage(true);
       else setLastPage(false);
     }
     loadStudents();
-  }, [page]);
+  }, [page, total_pages]);
 
   async function handleDelete(id) {
     if (window.confirm('Você deseja deletar esse aluno?')) {
@@ -35,17 +49,11 @@ export default function List() {
           page,
         },
       });
-      setStudents(response.data);
-    }
-  }
+      setStudents(response.data.students);
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
 
-  function prevPage() {
-    if (page !== 1) setPage(page - 1);
-  }
-
-  function nextPage() {
-    if (!lastPage) {
-      setPage(page + 1);
+      if (response.data.students.rows.length === 0) prevPage();
     }
   }
 

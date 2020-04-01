@@ -32,7 +32,6 @@ export default function CreatePlans() {
   }, [checkDuration, checkPrice]);
 
   function handleSubmit({ title, duration, price }) {
-    console.tron.log(price);
     dispatch(createPlanRequest(title, duration, price));
   }
 

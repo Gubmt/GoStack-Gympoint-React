@@ -13,10 +13,22 @@ import api from '~/services/api';
 export default function ListRegistration() {
   const [registrations, setRegistrations] = useState([]);
   const [page, setPage] = useState(1);
+  const [total_pages, setTotal_pages] = useState(0);
+  const [total_list, setTotal_list] = useState(0);
   const [lastPage, setLastPage] = useState(false);
 
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
+
   function dataFormatted(response) {
-    const data = response.data.map(reg => {
+    const data = response.data.registrations.map(reg => {
       return {
         id: reg.id,
         active: reg.active,
@@ -32,7 +44,7 @@ export default function ListRegistration() {
     });
     setRegistrations(data);
 
-    if (response.data.length < 5) setLastPage(true);
+    if (total_pages <= page) setLastPage(true);
     else setLastPage(false);
   }
 
@@ -45,9 +57,11 @@ export default function ListRegistration() {
       });
 
       dataFormatted(response);
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
     }
     loadRegistrations();
-  }, [page]); //eslint-disable-line
+  }, [page, total_pages]); //eslint-disable-line
 
   async function handleDelete(id) {
     if (window.confirm('Você deseja deletar essa matrícula?')) {
@@ -57,21 +71,16 @@ export default function ListRegistration() {
         },
       });
       dataFormatted(response);
-    }
-  }
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
 
-  function prevPage() {
-    if (page !== 1) setPage(page - 1);
-  }
-
-  function nextPage() {
-    if (!lastPage) {
-      setPage(page + 1);
+      if (response.data.registrations.length === 0) prevPage();
     }
   }
 
   return (
     <Container>
+      {console.tron.log(total_list, total_pages, page)}
       <header>
         <h1>Gerenciando matrículas</h1>
         <div>

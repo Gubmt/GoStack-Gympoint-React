@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MdAdd, MdHelpOutline } from 'react-icons/md';
 import history from '~/services/history';
 
@@ -11,10 +11,22 @@ import { formatPrice } from '~/util/format';
 export default function Plans() {
   const [plans, setPlans] = useState([]);
   const [page, setPage] = useState(1);
+  const [total_pages, setTotal_pages] = useState(0);
+  const [total_list, setTotal_list] = useState(0);
   const [lastPage, setLastPage] = useState(false);
 
+  function prevPage() {
+    if (page !== 1) setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (!lastPage) {
+      setPage(page + 1);
+    }
+  }
+
   function dateFormatted(response) {
-    const data = response.data.map(plan => ({
+    const data = response.data.plans.map(plan => ({
       ...plan,
       durationFormatted:
         plan.duration > 1 ? `${plan.duration} meses` : `${plan.duration} mês`,
@@ -22,9 +34,6 @@ export default function Plans() {
     }));
 
     setPlans(data);
-
-    if (response.data.length < 5) setLastPage(true);
-    else setLastPage(false);
   }
 
   useEffect(() => {
@@ -36,9 +45,15 @@ export default function Plans() {
       });
 
       dateFormatted(response);
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
+
+      if (total_pages <= page) setLastPage(true);
+      else setLastPage(false);
     }
     loadPlans();
-  }, [page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, total_pages]);
 
   async function handleDelete(id) {
     if (window.confirm('Você deseja deletar esse plano?')) {
@@ -49,16 +64,10 @@ export default function Plans() {
       });
 
       dateFormatted(response);
-    }
-  }
+      setTotal_list(response.data.total_list);
+      setTotal_pages(response.data.total_pages);
 
-  function prevPage() {
-    if (page !== 1) setPage(page - 1);
-  }
-
-  function nextPage() {
-    if (!lastPage) {
-      setPage(page + 1);
+      if (response.data.plans.length === 0) prevPage();
     }
   }
 
