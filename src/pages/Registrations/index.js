@@ -30,12 +30,13 @@ export default function ListRegistration() {
   function dataFormatted(response) {
     const data = response.data.registrations.map(reg => {
       return {
+        ...reg,
         id: reg.id,
         active: reg.active,
-        start_date: format(parseISO(reg.start_date), "d 'de' MMMM 'de' yyyy", {
+        startDate: format(parseISO(reg.start_date), "d 'de' MMMM 'de' yyyy", {
           locale: pt,
         }),
-        end_date: format(parseISO(reg.end_date), "d 'de' MMMM 'de' yyyy", {
+        endDate: format(parseISO(reg.end_date), "d 'de' MMMM 'de' yyyy", {
           locale: pt,
         }),
         student: reg.student,
@@ -80,7 +81,6 @@ export default function ListRegistration() {
 
   return (
     <Container>
-      {console.tron.log(total_list, total_pages, page)}
       <header>
         <h1>Gerenciando matrículas</h1>
         <div>
@@ -122,10 +122,10 @@ export default function ListRegistration() {
                     <span>{registration.plan.title}</span>
                   </td>
                   <td>
-                    <span>{registration.start_date}</span>
+                    <span>{registration.startDate}</span>
                   </td>
                   <td>
-                    <span>{registration.end_date}</span>
+                    <span>{registration.endDate}</span>
                   </td>
                   <td>
                     <FaCheckCircle
@@ -140,7 +140,16 @@ export default function ListRegistration() {
                         type="button"
                         onClick={() =>
                           history.push(
-                            `/registrations/update/${registration.id}`
+                            `/registrations/update/${registration.id}`,
+                            {
+                              id: registration.id,
+                              studentId: registration.student.id,
+                              studentName: registration.student.name,
+                              plan: registration.plan.title,
+                              start_date: registration.start_date,
+                              end_date: registration.end_date,
+                              price: registration.price,
+                            }
                           )
                         }
                       >

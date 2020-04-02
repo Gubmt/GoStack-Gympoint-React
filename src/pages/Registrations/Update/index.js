@@ -24,7 +24,7 @@ const schema = Yup.object().shape({
   start_date: Yup.string().required('A data é obrigatória'),
 });
 
-export default function UpdateRegistrations() {
+export default function UpdateRegistrations({ location }) {
   const [selected, setSelected] = useState();
 
   const [plan, setPlan] = useState();
@@ -47,33 +47,48 @@ export default function UpdateRegistrations() {
 
   useEffect(() => {
     async function loadRegistrations() {
-      const id = window.location.pathname.split('/');
+      /* const id = window.location.pathname.split('/');
 
       const registrations = await api.get('/registrations');
 
       const data = registrations.data.registrations.find(p => {
         return p.id === Number(id[3]);
-      });
+      }); */
 
       setEndDate({
-        newEndDate: data.end_date,
-        newEndDateFormatted: format(parseISO(data.end_date), "dd'/'MM'/'yyyy"),
+        newEndDate: location.state.end_date,
+        newEndDateFormatted: format(
+          parseISO(location.state.end_date),
+          "dd'/'MM'/'yyyy"
+        ),
       });
 
-      setTotalPrice({ newTotalPrice: data.price });
+      setTotalPrice({ newTotalPrice: location.state.price });
 
       setRegistration({
-        registration_id: data.id,
-        student_id: data.student.id,
-        student_name: data.student.name,
-        plan_title: data.plan.title,
-        start_date: format(parseISO(data.start_date), "dd'/'MM'/'yyyy"),
-        end_date: format(parseISO(data.end_date), "dd'/'MM'/'yyyy"),
-        price: formatPrice(data.price),
+        registration_id: location.state.id,
+        student_id: location.state.studentId,
+        student_name: location.state.studentName,
+        plan_title: location.state.plan,
+        start_date: format(
+          parseISO(location.state.start_date),
+          "dd'/'MM'/'yyyy"
+        ),
+        end_date: format(parseISO(location.state.end_date), "dd'/'MM'/'yyyy"),
+        price: formatPrice(location.state.price),
       });
     }
     loadRegistrations();
-  }, []);
+  }, [
+    location.state.end_date,
+    location.state.id,
+    location.state.plan,
+    location.state.plan.title,
+    location.state.price,
+    location.state.start_date,
+    location.state.studentId,
+    location.state.studentName,
+  ]);
 
   useEffect(() => {
     if (selected && plan) {

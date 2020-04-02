@@ -131,7 +131,14 @@ export default function List() {
                     <div>
                       <button
                         onClick={() =>
-                          history.push(`/students/update/${student.id}`)
+                          history.push(`/students/update/${student.id}`, {
+                            id: student.id,
+                            name: student.name,
+                            email: student.email,
+                            age: student.age,
+                            weight: student.weight,
+                            height: student.height,
+                          })
                         }
                         id="left"
                         type="button"

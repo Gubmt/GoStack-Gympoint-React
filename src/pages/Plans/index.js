@@ -114,7 +114,14 @@ export default function Plans() {
                   <td>
                     <div>
                       <button
-                        onClick={() => history.push(`/plans/update/${plan.id}`)}
+                        onClick={() =>
+                          history.push(`/plans/update/${plan.id}`, {
+                            id: plan.id,
+                            title: plan.title,
+                            price: plan.price,
+                            duration: plan.duration,
+                          })
+                        }
                         id="left"
                         type="button"
                       >

@@ -19,7 +19,7 @@ const schema = Yup.object().shape({
   height: Yup.string().required('A altura é obrigatória'),
 });
 
-export default function UpdateStudents() {
+export default function UpdateStudents({ location }) {
   const [student, setStudent] = useState({});
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -30,32 +30,33 @@ export default function UpdateStudents() {
 
   useEffect(() => {
     async function loadStudents() {
+      /*
       const students = await api.get('/students');
       const id = window.location.pathname.split('/');
 
       setStudent(
-        students.data.find(p => {
+        students.data.students.find(p => {
           return p.id === Number(id[3]);
         })
-      );
+      ); */
 
-      setName(student.name);
-      setEmail(student.email);
-      setAge(student.age);
-      setWeight(student.weight);
-      setHeight(student.height);
+      setName(location.state.name);
+      setEmail(location.state.email);
+      setAge(location.state.age);
+      setWeight(location.state.weight);
+      setHeight(location.state.height);
     }
     loadStudents();
   }, [
-    student.age,
-    student.email,
-    student.height,
-    student.name,
-    student.weight,
+    location.state.age,
+    location.state.email,
+    location.state.height,
+    location.state.name,
+    location.state.weight,
   ]);
 
   function handleSubmit({ name, email, age, weight, height }) {
-    const { id } = student;
+    const { id } = location.state;
     dispatch(updateStudentRequest(id, name, email, age, weight, height));
   }
 

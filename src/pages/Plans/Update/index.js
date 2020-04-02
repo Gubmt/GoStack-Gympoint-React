@@ -19,7 +19,7 @@ const schema = Yup.object().shape({
   price: Yup.string().required('O preço é obrigatório'),
 });
 
-export default function UpdatePlans() {
+export default function UpdatePlans({ location }) {
   const [plan, setPlan] = useState({});
   const [checkTitle, setCheckTitle] = useState();
   const [checkDuration, setCheckDuration] = useState();
@@ -29,22 +29,12 @@ export default function UpdatePlans() {
 
   useEffect(() => {
     async function loadPlans() {
-      const id = window.location.pathname.split('/');
-
-      const plans = await api.get('/plans');
-
-      setPlan(
-        plans.data.find(p => {
-          return p.id === Number(id[3]);
-        })
-      );
-
-      setCheckTitle(plan.title);
-      setCheckDuration(plan.duration);
-      setCheckPrice(plan.price);
+      setCheckTitle(location.state.title);
+      setCheckDuration(location.state.duration);
+      setCheckPrice(location.state.price);
     }
     loadPlans();
-  }, [plan.duration, plan.price, plan.title]);
+  }, [location.state.duration, location.state.price, location.state.title]);
 
   useEffect(() => {
     if (checkDuration && checkPrice) {
@@ -53,7 +43,7 @@ export default function UpdatePlans() {
   }, [checkDuration, checkPrice]);
 
   function handleSubmit({ title, duration, price }) {
-    const { id } = plan;
+    const { id } = location.state;
     dispatch(updatePlanRequest(id, title, duration, price));
   }
 
